@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launch Countdown</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1e1f29;
+            color: #fb6087;
+            font-family: 'Red Hat Text', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        h1 {
+            text-transform: uppercase;
+            letter-spacing: 0.5rem;
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            color: white;
+        }
+        
+        .countdown-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .countdown-box {
+            position: relative;
+            width: 8rem;
+            height: 8rem;
+            perspective: 300px;
+        }
+        
+        .countdown-value {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #343650;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4rem;
+            font-weight: bold;
+            color: #fb6087;
+            box-shadow: 0 10px 0 rgba(0, 0, 0, 0.2);
+            backface-visibility: hidden;
+            overflow: hidden;
+        }
+        
+        .countdown-value::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .countdown-value.top {
+            transform-origin: bottom;
+            z-index: 2;
+        }
+        
+        .countdown-value.bottom {
+            transform-origin: top;
+            transform: rotateX(90deg);
+            z-index: 1;
+        }
+        
+        .countdown-label {
+            color: #8486a9;
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+        
+        .flip {
+            animation: flip 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes flip {
+            0% {
+                transform: rotateX(0deg);
+            }
+            100% {
+                transform: rotateX(-90deg);
+            }
+        }
+        
+        .flip-bottom {
+            animation: flip-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+        }
+        
+        @keyframes flip-bottom {
+            0% {
+                transform: rotateX(90deg);
+            }
+            100% {
+                transform: rotateX(0deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .countdown-container {
+                gap: 1rem;
+            }
+            
+            .countdown-box {
+                width: 5rem;
+                height: 5rem;
+            }
+            
+            .countdown-value {
+                font-size: 2.5rem;
+            }
+            
+            h1 {
+                font-size: 1.2rem;
+                letter-spacing: 0.3rem;
+            }
+            
+            .countdown-label {
+                font-size: 0.6rem;
+                letter-spacing: 0.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>We're launching soon</h1>
+    
+    <div class="countdown-container">
+        <div class="countdown-item">
+            <div class="countdown-box">
+                <div class="countdown-value top" id="days-top">08</div>
+                <div class="countdown-value bottom" id="days-bottom">08</div>
+            </div>
+            <div class="countdown-label">Days</div>
+        </div>
+        
+        <div class="countdown-item">
+            <div class="countdown-box">
+                <div class="countdown-value top" id="hours-top">23</div>
+                <div class="countdown-value bottom" id="hours-bottom">23</div>
+            </div>
+            <div class="countdown-label">Hours</div>
+        </div>
+        
+        <div class="countdown-item">
+            <div class="countdown-box">
+                <div class="countdown-value top" id="minutes-top">55</div>
+                <div class="countdown-value bottom" id="minutes-bottom">55</div>
+            </div>
+            <div class="countdown-label">Minutes</div>
+        </div>
+        
+        <div class="countdown-item">
+            <div class="countdown-box">
+                <div class="countdown-value top" id="seconds-top">41</div>
+                <div class="countdown-value bottom" id="seconds-bottom">41</div>
+            </div>
+            <div class="countdown-label">Seconds</div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Set the date we're counting down to (7 days from now)
+        const countDownDate = new Date();
+        countDownDate.setDate(countDownDate.getDate() + 7);
+        
+        // Store previous values to detect changes
+        let prevDays = 0;
+        let prevHours = 0;
+        let prevMinutes = 0;
+        let prevSeconds = 0;
+        
+        // Initialize with current values
+        function initializeValues() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+            
+            prevDays = Math.floor(distance / (1000 * 60 * 60 * 24));
+            prevHours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            prevMinutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            prevSeconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Set initial values
+            document.getElementById("days-top").textContent = prevDays.toString().padStart(2, '0');
+            document.getElementById("days-bottom").textContent = prevDays.toString().padStart(2, '0');
+            document.getElementById("hours-top").textContent = prevHours.toString().padStart(2, '0');
+            document.getElementById("hours-bottom").textContent = prevHours.toString().padStart(2, '0');
+            document.getElementById("minutes-top").textContent = prevMinutes.toString().padStart(2, '0');
+            document.getElementById("minutes-bottom").textContent = prevMinutes.toString().padStart(2, '0');
+            document.getElementById("seconds-top").textContent = prevSeconds.toString().padStart(2, '0');
+            document.getElementById("seconds-bottom").textContent = prevSeconds.toString().padStart(2, '0');
+        }
+        
+        initializeValues();
+        
+        // Update the count down every 1 second
+        const countdown = setInterval(function() {
+            // Get today's date and time
+            const now = new Date().getTime();
+            
+            // Find the distance between now and the count down date
+            const distance = countDownDate - now;
+            
+            // Time calculations for days, hours, minutes and seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Days changed
+            if (days !== prevDays) {
+                document.getElementById("days-top").classList.add("flip");
+                document.getElementById("days-bottom").textContent = days.toString().padStart(2, '0');
+                document.getElementById("days-bottom").classList.add("flip-bottom");
+                
+                // Reset animations after they complete
+                setTimeout(() => {
+                    document.getElementById("days-top").textContent = days.toString().padStart(2, '0');
+                    document.getElementById("days-top").classList.remove("flip");
+                    document.getElementById("days-bottom").classList.remove("flip-bottom");
+                }, 1000);
+                
+                prevDays = days;
+            }
+            
+            // Hours changed
+            if (hours !== prevHours) {
+                document.getElementById("hours-top").classList.add("flip");
+                document.getElementById("hours-bottom").textContent = hours.toString().padStart(2, '0');
+                document.getElementById("hours-bottom").classList.add("flip-bottom");
+                
+                setTimeout(() => {
+                    document.getElementById("hours-top").textContent = hours.toString().padStart(2, '0');
+                    document.getElementById("hours-top").classList.remove("flip");
+                    document.getElementById("hours-bottom").classList.remove("flip-bottom");
+                }, 1000);
+                
+                prevHours = hours;
+            }
+            
+            // Minutes changed
+            if (minutes !== prevMinutes) {
+                document.getElementById("minutes-top").classList.add("flip");
+                document.getElementById("minutes-bottom").textContent = minutes.toString().padStart(2, '0');
+                document.getElementById("minutes-bottom").classList.add("flip-bottom");
+                
+                setTimeout(() => {
+                    document.getElementById("minutes-top").textContent = minutes.toString().padStart(2, '0');
+                    document.getElementById("minutes-top").classList.remove("flip");
+                    document.getElementById("minutes-bottom").classList.remove("flip-bottom");
+                }, 1000);
+                
+                prevMinutes = minutes;
+            }
+            
+            // Seconds changed (always happens)
+            document.getElementById("seconds-top").classList.add("flip");
+            document.getElementById("seconds-bottom").textContent = seconds.toString().padStart(2, '0');
+            document.getElementById("seconds-bottom").classList.add("flip-bottom");
+            
+            setTimeout(() => {
+                document.getElementById("seconds-top").textContent = seconds.toString().padStart(2, '0');
+                document.getElementById("seconds-top").classList.remove("flip");
+                document.getElementById("seconds-bottom").classList.remove("flip-bottom");
+            }, 1000);
+            
+            prevSeconds = seconds;
+            
+            // If the count down is finished, clear interval
+            if (distance < 0) {
+                clearInterval(countdown);
+                document.getElementById("days-top").textContent = "00";
+                document.getElementById("days-bottom").textContent = "00";
+                document.getElementById("hours-top").textContent = "00";
+                document.getElementById("hours-bottom").textContent = "00";
+                document.getElementById("minutes-top").textContent = "00";
+                document.getElementById("minutes-bottom").textContent = "00";
+                document.getElementById("seconds-top").textContent = "00";
+                document.getElementById("seconds-bottom").textContent = "00";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
