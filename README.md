@@ -1,8 +1,9 @@
+
 # Launch Countdown ⏱️
 A sleek, responsive web application that calculates your exact age in years, months, and days, along with additional birthday-related information.
 A visually stunning, animated countdown timer with flipping card effect, perfect for product launches, events, or special occasions.
 
-![Launch Countdown Preview](https://i.imgur.com/JQZ5l0a.png) *(Replace with your actual screenshot)*
+![countDown](https://github.com/user-attachments/assets/404383d0-6a6d-4995-abb7-300899732502)
 
 ## Features ✨
 
